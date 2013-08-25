@@ -1,0 +1,139 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Whois Query As A Service</title>
+<link href='http://fonts.googleapis.com/css?family=Poiret+One|Forum' rel='stylesheet' type='text/css'>
+<style>
+* {
+margin: 0;
+padding: 0;
+border: 0;
+}
+html, body{
+background: #333;
+}
+body{
+    width: 510px;
+    padding: 0px 20px;
+}
+.logo {
+color:#fff;
+font-size:100px;
+font-family: 'Poiret One', cursive;
+}
+.logo span {
+color:#f00;
+font-size:200px;
+font-family: 'Forum', cursive;
+}
+#search_box {
+    position: absolute;
+    top: 220px;
+    left: 20px;
+}
+#search_input {
+    background: #999;
+    border-radius: 10px;
+    padding: 20px;
+    width: 510px;
+    font-size: 30px;
+}
+#search_input:hover {
+    background: #ccc;
+}
+#search_btn {
+    cursor: pointer;
+    position: absolute;
+    top: 12px;
+    right: 20px;
+}
+#result {
+    width: 510px;
+    margin-top: 100px;
+    margin-bottom: 50px;
+}
+#plain_result {
+    width: 510px;
+    min-height: 300px;
+    background: #000;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+</style>
+</head>
+<body>
+<div class="logo">43<span>Q</span>.name</div>
+<div id="search_box">
+<input id="search_input" type="text" value="43q.name">
+<div id="search_btn" style="display:none">
+<i class="icon-search icon-3x"></i>
+</div>
+</div>
+<div id="result">
+<textarea id="plain_result" style="display:none">
+Whois Server Version 2.0
+
+Domain names in the .com and .net domains can now be registered
+with many different competing registrars. Go to http://www.internic.net
+for detailed information.
+
+</textarea>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js"></script>
+<script>
+var opts = {
+  lines: 15, // The number of lines to draw
+  length: 0, // The length of each line
+  width: 10, // The line thickness
+  radius: 30, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 0, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#fff', // #rgb or #rrggbb or array of colors
+  speed: 1, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: '65px', // Top position relative to parent in px
+  left: '145px' // Left position relative to parent in px
+};
+var target = document.getElementsByTagName('body')[0];
+var spinner = new Spinner(opts);
+window.showSpin = function() {
+spinner.spin(target);
+};
+window.stopSpin = function() {
+spinner.stop();
+};
+</script>
+<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+var autoHeight = function() {
+    var s_height = $('#plain_result')[0].scrollHeight + 50;
+    $('#plain_result').css({height: s_height+'px'}).fadeIn('slow');
+};
+jQuery(function(){
+    $('#search_btn').show('slow');
+      
+    $('#search_btn').click(function(){
+        $('#plain_result').text('').css({height: '200px'});
+        $.getJSON('/q', {domain: $('#search_input')[0].value})
+        .done(function(data) {
+            stopSpin();
+            $('#plain_result').text(data.result);
+            $('#plain_result').show();
+            autoHeight();
+        });
+        showSpin();
+        $('#plain_result').fadeOut();
+        autoHeight();
+    });
+    
+});
+</script>
+</body>
+</html>
